@@ -1,0 +1,173 @@
+num_points = 10 + 9 ;
+
+
+%C_d control check
+
+mu = 13/ 26.98; % ratio of Nitrogen to Aliminnium
+alpha_teoretical = (4*mu)/(1+mu)^2*(cos(pi/4))^2; %
+
+alpha_teoretical_2 = (7.5*10^(-17)*5.14*10^7*10^6*1011)/ (1.0 + (7.5*10^(-17)*5.14*10^7*10^6*1011)); % for NRLSMIE-00 model
+
+alpha = alpha_teoretical_2;
+r = sqrt(1-alpha);
+
+%flat plate normal flow
+C_d_flat90 = 2*(1+(2/3)*r);
+
+C_d_vec   = zeros(num_points,1);
+theta_vec = zeros(num_points,1);
+A_ref_tot_vec = zeros(num_points,1);
+
+deg_in_iteration = 90 / num_points -1 ;
+
+for c = 1:num_points
+
+    theta = (5*(pi/180))*(c-1); %pitch of satellite
+    
+    %flat plate at incidence theta
+    C_d_flat_theta = 2*(1+(2/3)*r*sin(theta));
+    C_d_flat_theta_inv = 2*(1+(2/3)*r*sin(pi/2-theta));
+    
+    % portion of total area as A_ref
+    
+    %Areas
+    %2 solar panels
+    A_tot_solar = 2*15*15;
+    A_ref_solar = A_tot_solar*sin(theta);
+    
+    %box (front and upper side)
+    A_tot_box_front = 10*10;
+    A_tot_box_top = 15*10;
+    
+    A_ref_box_front = A_tot_box_front*cos(theta);
+    A_ref_box_top   = A_tot_box_top*sin(theta);
+    
+    
+    A_ref_tot = A_ref_solar + A_ref_box_top + A_ref_box_front;
+    
+    %Total drag coefficent
+    C_d_total = (A_ref_box_front/A_ref_tot)* C_d_flat_theta_inv + ((A_ref_tot-A_ref_box_front)/A_ref_tot)* C_d_flat_theta;
+    C_d_vec(c)   = C_d_total;
+    theta_vec(c) = theta;
+    A_ref_tot_vec(c) = A_ref_tot;
+
+end
+
+A_X_C_D = A_ref_tot_vec.*C_d_vec;
+
+figure(1);
+plot(theta_vec*180/pi, C_d_vec);
+title("Drag coefficent for different pitch angles")
+grid on;
+xlabel('Pitch angle [°]') 
+ylabel('Drag coefficent') 
+
+figure(2);
+plot(theta_vec*180/pi, A_ref_tot_vec);
+title("Area for different pitch angles")
+grid on;
+xlabel('Pitch angle [°]') 
+ylabel('Area [cm^2]') 
+
+figure(3)
+plot(theta_vec*180/pi, A_ref_tot_vec.*C_d_vec);
+title("Area for different pitch angles")
+grid on;
+xlabel('Pitch angle [°]') 
+ylabel('Area [cm^2]') 
+
+syms x
+h(x) = 40.0121*x^4 + -411.7354*x^3 + 327.3380*x^2 + 1173.9619*x^1 + 261.1192;
+g(x) = finverse(h(x));
+
+
+
+% X = theta_vec;
+% y = A_X_C_D;
+% modelfun = @(b,x) b(1) * x.^2 + b(2)* x.^3 + b(3) + b(4)* x.^(0.5);
+% beta0 = [1 1 1 1];
+% mdl = fitnlm(X,y,modelfun,beta0);
+% sol = fitnlm;
+
+fx_d = 0;
+
+x = theta_vec; 
+y = A_X_C_D/10^4;
+p = polyfit(x,y,4);
+%p = [40.01, -411.74, 327.3, 1173.96, 261.12-fx_d];
+p(5) = p(5) - fx_d;
+r = roots(p);
+root = select_root(r, 0, pi/2)
+syms x
+% assume(x > 0);
+%assume(x <= pi/2);
+% assumptions(x)
+fx(x) = poly2sym(p);
+%gx(x) = finverse(fx);
+%sol = gx(1200);
+%sol_num = double(sol);
+
+% 
+% options = optimset('Display','iter'); % show iterations
+% z_inv = fzero(@(x) (fx(x) - fx_d), [0 pi/2], options);
+% sol_num = double(z_inv);
+
+
+function root = select_root(roots, lower_bound, upper_bound)
+    %extract values that are within the inteval
+    root = [];
+    for row = 1:size(roots)
+        val = roots(row);
+        if val > lower_bound && val < upper_bound
+            root(end+1) = val;
+        end
+
+    end
+    if size(root,2) > 1
+        root_index = min(root);
+        root = root(root_index);
+    end
+
+    if size(root,2) < 1
+    end
+
+end
+
+function y = F(x)
+    y = 40.0121*x^4 + -411.7354*x^3 + 327.3380*x^2 + 1173.9619*x^1 + 261.1192;
+end
+
+
+function area_drag = f(theta)
+    alpha_teoretical_2 = (7.5*10^(-17)*5.14*10^7*10^6*1011)/ (1.0 + (7.5*10^(-17)*5.14*10^7*10^6*1011)); % for NRLSMIE-00 model
+
+    alpha = alpha_teoretical_2;
+    r = sqrt(1-alpha);
+
+    %C_d_flat_theta = (2*(1+(2/3)*r*sin(theta)));
+    %C_d_flat_theta_inv = (2*(1+(2/3)*r*sin(pi/2-theta)));
+    
+    % portion of total area as A_ref
+    
+    %Areas
+    %2 solar panels
+    %A_tot_solar = 2*15*15;
+    %A_ref_solar = 2*15*15*sin(theta);
+    
+    %box (front and upper side)
+    %A_tot_box_front = 10*10;
+    %A_tot_box_top = 15*10;
+    
+    %A_ref_box_front = (10*10*cos(theta));
+    %A_ref_box_top   = (15*10*sin(theta));
+    
+    
+    %A_ref_tot = (2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta)));
+    
+    %Total drag coefficent
+    %C_d_total = ((10*10*cos(theta))/(2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta))))* (2*(1+(2/3)*r*sin(pi/2-theta))) + (((2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta)))-(10*10*cos(theta)))/(2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta))))* (2*(1+(2/3)*r*sin(theta)));
+    
+    area_drag = (2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta))) * ((10*10*cos(theta))/(2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta))))* (2*(1+(2/3)*r*sin(pi/2-theta))) + (((2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta)))-(10*10*cos(theta)))/(2*15*15*sin(theta) + (15*10*sin(theta)) + (10*10*cos(theta))))* (2*(1+(2/3)*r*sin(theta)));
+end
+
+
