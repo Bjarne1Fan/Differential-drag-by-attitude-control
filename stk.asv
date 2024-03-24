@@ -15,16 +15,22 @@ root.ExecuteCommand('Animate * Reset');
 satellite = scenario.Children.New('eSatellite','LeoSat');
 
 keplerian = satellite.Propagator.InitialState.Representation.ConvertTo('eOrbitStateClassical');
-keplerian.SizeShapeType = 'eSizeShapeAltitude';
+%keplerian.SizeShapeType = 'eSizeShapeAltitude'; % perigee and apogee height insteand of a and e
 keplerian.LocationType = 'eLocationTrueAnomaly';
-keplerian.Orientation.AscNodeType = 'eAscNodeLAN';
+%keplerian.Orientation.AscNodeType = 'eAscNodeLAN';
 
-keplerian.SizeShape.PerigeeAltitude = 500.1;
-keplerian.SizeShape.ApogeeAltitude = 550.1;
+keplerian.SizeShape.SemiMajorAxis = earth_radi+ 500*10^3;
+keplerian.SizeShape.Eccentricity  = 0.1;
 keplerian.Orientation.Inclination = 20;
-keplerian.Orientation.ArgOfPerigee = 0;
-keplerian.Orientation.AscNode.Value = 245;
-keplerian.Location.Value = 180;
+keplerian.Orientation.ArgOfPerigee = 90;
+keplerian.Orientation.AscNode.Value     = 10;
+keplerian.Location.Value = 0;
+%keplerian.SizeShape.PerigeeAltitude = 500.1;
+%keplerian.SizeShape.ApogeeAltitude = 550.1;
+%keplerian.Orientation.Inclination = 20;
+%keplerian.Orientation.ArgOfPerigee = 0;
+%keplerian.Orientation.AscNode.Value = 245;
+%keplerian.Location.Value = 180;
 satellite.Propagator.InitialState.Representation.Assign(keplerian);
 % satellite.Propagator.Propagate;
 
@@ -89,7 +95,11 @@ sat_Arg_of_Perigee= cell2mat(satPosDP.DataSets.GetDataSetByName('Arg of Perigee'
 %initial state must be updated to be the endpoint of the last timestep
 %keplerian = satellite.Propagator.InitialState.Representation.ConvertTo('eOrbitStateClassical');
 keplerian.SizeShape.SemiMajorAxis = sat_semi_major_axis(1);
-keplerian.SizeShape.Eccentricity = 
+keplerian.SizeShape.Eccentricity  = sat_Eccentricity(1);
+keplerian.Orientation.Inclination = sat_inclination(1);
+keplerian.Orientation.ArgOfPerigee = sat_Arg_of_Perigee(1);
+keplerian.Orientation.AscNode.Value     = sat_RAAN(1);
+keplerian.Location.Value = sat_true_anomally(1);
 %keplerian.AssignClassical()
 %keplerian.OrbitStateType
 forceModel.Drag.DragModel.Cd=2.2;
