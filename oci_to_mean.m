@@ -1,44 +1,57 @@
-function [a_m, e_m, i_m, Omega_m, omega_m, M_m] = occ2mean_orbital(a, e, i, Omega, omega, nu, M)
+function [a_m, e_m, i_m, Omega_m, omega_m, M_m] = occ2mean_orbital(a, e, i, Omega, omega, nu, M, J_2, earth_radi)
 
     %% Osculating orbital elements to mean orbital elements
-    gamma_2 = - (J_2/2)*(earth_radi/a)^2;
+    gamma_2 =  - (J_2/2)*(earth_radi/a)^2;
     
-    netta = sqrt(1 -e^2);
-    gamma_2_marked = gamma_2 / (netta^4);
+    netta = sqrt(1 - e^2); % good
+    gamma_2_marked = gamma_2 / (netta^4); % good
 
-    a_div_r = (1 + e*cos(nu) /netta^2 );
+    a_div_r = (1 + e*cos(nu) /netta^2 ); %good
 
-    a_m = a + gamma_2 *( ( 3*cos(i)^2 -1) * ( (a/r)^3 - 1/(netta^3) ) ) ...
-        + 3*( 1 - cos(i)^2) * (a/r)^3*cos(2*omega +2*nu);
+    a_m = a + a*gamma_2 *( ( 3*cos(i)^2 -1) * ( (a_div_r)^3 - 1/(netta^3) )  ...
+        + 3*( 1 - cos(i)^2) * (a_div_r)^3*cos(2*omega +2*nu) ); % good
     
-    de_1 = (gamma_2_marked/8) * e * netta^2 *( 1 - 11*cos(i)^2 - 40* (cos(i) / (1-5*cos(i)^2) ) ) * cos(2*omega);
-    de   = de_1 + (netta^2/2) * (gamma_2 * ( ( 3*cos(i)^2-1)/(netta^6)  * (e*netta + (e/(1+netta)) + 3*cos(nu) + 3 *e*cos(nu)^2 + e^2*cos(nu)^3 )  + ...
-        3*( (1-cos(i)^2)/(netta^6) )* (e + 3*cos(nu) + 3*e*(cos(nu)^2) + e^2*cos(nu^3) )* cos(2*omega + 2*nu) ) - gamma_2_marked*( 1-cos(i)^2)*(3*cos(2*omega+nu)) + cos(2*omega + 3*nu) );
+    de_1 = (gamma_2_marked/8) * e * netta^2 *( 1 - 11*cos(i)^2 - 40* (cos(i)^4 / (1-5*cos(i)^2) ) ) * cos(2*omega); %ok
+    de   = de_1 + (netta^2/2) * ( gamma_2 * ( (( 3*cos(i)^2-1)/netta^6) * ( e*netta + (e/(1+netta)) + 3*cos(nu)...
+        + 3 *e*cos(nu)^2 + e^2*cos(nu)^3 )  + 3*( (1-cos(i)^2)/(netta^6) )* (e ...
+        + 3*cos(nu) + 3*e*(cos(nu)^2) + e^2*cos(nu)^3 )* cos(2*omega + 2*nu) )...
+        - gamma_2_marked*( 1-cos(i)^2)*(3*cos(2*omega+nu) + cos(2*omega + 3*nu) ) ); % good (results at least)
 
-    di = - (e*de_1)/(netta^2*tan(i)) + (gamma_2_marked/2) *cos(i)*sqrt(1-cos(i)^2)*(3*cos(2*omega+2*nu) + 3*e*cos(2*omega+nu) + e*cos(2*omega+3*nu));
+    di = - (e*de_1)/(netta^2*tan(i)) + (gamma_2_marked/2) *cos(i)*sqrt(1-cos(i)^2)*(3*cos(2*omega+2*nu) ...
+        + 3*e*cos(2*omega+nu) + e*cos(2*omega+3*nu) ); % ok
     
     %not quite lambda 
-    lambda_marked = M + omega + Omega + (gamma_2_marked/8)*netta^3 * (1 - 11*cos(i)^2 - 40*( cos(i_leader^4)/(1- 5 *cos(i)^2) ) ) - ...
-        gamma_2_marked/16 *( 2 + e^2 -11*(2+3*e^2)*cos(i)^2 -40*(2+5*e^2)* (cos(i)^4/(1-5*cos(i)^2)) -400*e^2*(cos(i)^6/(1-5*cos(i)^2)^2)) ...
+    lambda_marked = M + omega + Omega + (gamma_2_marked/8)*netta^3 * (1 - 11*cos(i)^2 - 40*( cos(i^4)/(1- 5 *cos(i)^2) ) ) - ...
+        gamma_2_marked/16 *( 2 + e^2 -11*(2+3*e^2)*cos(i)^2  ...
+        -40*(2+5*e^2)* (cos(i)^4/(1-5*cos(i)^2)) -400*e^2*(cos(i)^6/(1-5*cos(i)^2)^2)) ...
+        +gamma_2_marked/4 *(-6*(1-5*cos(i)^2) *(nu-M+e*sin(nu) ) ...
+        + (3-5*cos(i)^2) *(3*sin(2*omega+2*nu) + 3*e*sin(2*omega+nu) ...
+        +e*sin(2*omega+3*nu) ) ) ...
         + gamma_2_marked/8 * e^2 *cos(i)*( 11 + 80 * (cos(i)^2/(1-5*cos(i)^2)) + 200* (cos(i)^4)/(1-5*cos(i)^2)^2) ...
-        -gamma_2_marked/2 * cos(i)*(6* (nu-M+e*sin(nu)) -3*sin(2*omega+2*nu) -3*e*sin(2*omega+nu) - e*sin(2*omega+3*nu));
+        -gamma_2_marked/2 * cos(i)*(6* (nu-M+e*sin(nu)) ...
+        -3*sin(2*omega+2*nu) -3*e*sin(2*omega+nu) - e*sin(2*omega+3*nu));
 
-    e_dM = gamma/4 * e *netta^3 *(1 - 11*cos(i)^2 -40* (cos(i)^4/(1-5*cos(i)^2))) ...
+    e_dM = gamma_2_marked/8 * e *netta^3 *(1 - 11*cos(i)^2 -40* (cos(i)^4/(1-5*cos(i)^2))) ...
         -gamma_2_marked/4 * netta^3 * ( 2* (3*cos(i)^2 -1)*( (a_div_r*netta)^2 + a_div_r + 1)*sin(nu)  ...
-        + 3*(1-3*cos(i)^2)* ( ( -(a_div_r*netta)^2 - a_div_r + 1)*sin(2*omega+nu) + ( (a_div_r*netta)^2 + a_div_r + 1/3)*sin(2*omega+3*nu) ) );
+        + 3*(1-cos(i)^2)* ( ( -(a_div_r*netta)^2 - a_div_r + 1)*sin(2*omega+nu) ...
+        + ( (a_div_r*netta)^2 + a_div_r + 1/3)*sin(2*omega+3*nu) ) );
+
     dOmega = -gamma_2_marked/8 * e^2 *cos(i)*( 11 + 80 * (cos(i)^2/(1-5*cos(i)^2)) + 200 *(cos(i)^4/(1-5*cos(i)^2)^2) ) ...
-        -gamma_2_marked/2  *cos(i)* ( 6* (nu-M + e*sin(nu)) -3*sin(2*omega+2*nu) - 3*e*sin(2*omega+nu)-*e*sin(2*omega+3*nu) );
+        -gamma_2_marked/2  *cos(i)* ( 6* (nu-M + e*sin(nu)) -3*sin(2*omega+2*nu) ...
+        - 3*e*sin(2*omega+nu)-e*sin(2*omega+3*nu) );
 
     d_1 = (e + de)*sin(M) + (e_dM)*cos(M);
     d_2 = (e + de)*cos(M) - (e_dM)*sin(M);
 
-    M_m = atan(d_1/d_2);
+    %M_m = atan(d_1/d_2);
+    M_m = atan2(d_2,d_1);
     e_m = sqrt(d_1^2 +d_2^2);
 
     d_3 = (sin(i/2) + cos(i/2)*(di/2))*sin(Omega) + sin(i/2)*dOmega *cos(Omega);
     d_4 = (sin(i/2) + cos(i/2)*(di/2))*cos(Omega) - sin(i/2)*dOmega *sin(Omega);
 
-    Omega_m = atan(d_3/d_4);
+    %Omega_m = atan(d_3/d_4);
+    Omega_m  = atan2(d_4,d_3);
 
     i_m = 2* asin(sqrt(d_3^2 + d_4^2));
     omega_m = lambda_marked - M_m - Omega_m;
