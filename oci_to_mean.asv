@@ -1,4 +1,4 @@
-function [a_m, e_m, i_m, Omega_m, omega_m, M_m] = occ2mean_orbital(a, e, i, Omega, omega, nu, M)
+function [a_m, e_m, i_m, Omega_m, omega_m, nu_m, M_m] = cart2kep(a, e, i, Omega, omega, nu, M)
 
     %% Osculating orbital elements to mean orbital elements
     gamma_2 = - (J_2/2)*(earth_radi/a)^2;
@@ -36,11 +36,6 @@ function [a_m, e_m, i_m, Omega_m, omega_m, M_m] = occ2mean_orbital(a, e, i, Omeg
     e_m = sqrt(d_1^2 +d_2^2);
 
     d_3 = (sin(i/2) + cos(i/2)*(di/2))*sin(Omega) + sin(i/2)*dOmega *cos(Omega);
-    d_4 = (sin(i/2) + cos(i/2)*(di/2))*cos(Omega) - sin(i/2)*dOmega *sin(Omega);
-
-    Omega_m = atan(d_3/d_4);
-
-    i_m = 2* asin(sqrt(d_3^2 + d_4^2));
-    omega_m = lambda_marked - M_m - Omega_m;
+    d_4 = (sin(i/2) + cos(i/2)*(di/2))*cos(Omega) - sin(i/2)*dOmega *cos(Omega);
     
 end
