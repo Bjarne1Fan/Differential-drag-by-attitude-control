@@ -31,8 +31,8 @@ n_leader    = sqrt(mu/a_leader^3);   %mean angular motion
 n_follower  = sqrt(mu/a_follower^3); %mean angular motion
 
 %initial conditions satellites
-m_follower = 1;
-m_leader = 1;
+m_f = 1;
+m_l = 1;
 
 C_d_leader   = 1;
 C_d_follower = 1;
@@ -40,8 +40,8 @@ C_d_follower = 1;
 A_leader     = 1;
 A_follower   = 1;
 
-BC_leader    = m_leader / (C_d_leader*A_leader);
-BC_follower  = m_follower / (C_d_follower*A_follower);
+BC_leader    = m_l / (C_d_leader*A_leader);
+BC_follower  = m_f / (C_d_follower*A_follower);
 
 %V_rel_leader   = G*M/a_leader; %speed for circular orbit
 %V_rel_follower = G*M/a_follower;
@@ -119,6 +119,8 @@ A_tot = A_kep + A_j2 + A_drag;
 % Mean orbital Elemets
 % Dont konw if this is needed, but needed if i want to recover the full
 % orbits of each spacecraft
+
+
 
 
 
