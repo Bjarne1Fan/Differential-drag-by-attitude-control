@@ -43,8 +43,8 @@ Omega_follower  = 0; % logidtude of accendng node
 i_leader        = 20; % inclination
 i_follower      = 20; % inclination
 
-e_leader       = 0.5; %eccenticity
-e_follower     = 0.5;  %eccentricity
+e_leader       = 0.01; %eccenticity
+e_follower     = 0.01;  %eccentricity
 
 u_leader    = omega_leader + M_leader;
 u_follower  = omega_follower + M_follower;

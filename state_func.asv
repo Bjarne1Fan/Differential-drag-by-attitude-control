@@ -1,5 +1,5 @@
 %x_f is assumed to be constant for the prediction interval
-function dxdt = state_func(x,u, a_f_nmpc, e_f_nmpc, i_f_nmpc, omega_f_nmpc, rho_f)
+function dxdt = state_func(x,u, a_c, e_c, i_c, omega_c, rho)
     %temp consants
     %x_f = [500*10^3; 2; 0.001 ; 0.001 ; 0.01 ; 0.01];
     %rho = 1;
@@ -9,12 +9,6 @@ function dxdt = state_func(x,u, a_f_nmpc, e_f_nmpc, i_f_nmpc, omega_f_nmpc, rho_
     mu              = G*earth_mass;
     J_2             =  1.08263 * 10^(-3);
     R_E             = 6371*10^3; % 6371km
-
-    a_c = a_f_nmpc;
-    e_c = e_f_nmpc;
-    i_c = i_f_nmpc;
-    omega_c = omega_f_nmpc;
-    rho = rho_f;
 
     %a_c     = x_f(1);
     %e_c     = x_f(2);
