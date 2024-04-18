@@ -18,11 +18,11 @@ A_l_max = 0.6;
 A_f_max = 0.6;
 C_d = 2.6;
 
-B_f_min = (C_d*A_f_min)/m_f;
-B_f_max = (C_d*A_f_max)/m_f;
+B_f_min = 0.0130124908105961; (C_d*A_f_min)/m_f;
+B_f_max = 0.0780749448635768; %(C_d*A_f_max)/m_f;
 
-B_l_min = (C_d*A_l_min)/m_l;
-B_l_max = (C_d*A_l_max)/m_l;
+B_l_min = 0.0130124908105961; %(C_d*A_l_min)/m_l;
+B_l_max = 0.0780749448635768; %(C_d*A_l_max)/m_l;
 
 
 %initial conditions Orbit

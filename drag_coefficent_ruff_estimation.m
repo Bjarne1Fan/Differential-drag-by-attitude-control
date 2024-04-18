@@ -1,5 +1,7 @@
 num_points = 10 + 9 ;
 
+%NOTE that the mass of the spacecraft is also defined here
+m = 2;
 
 %C_d control check
 
@@ -32,12 +34,12 @@ for c = 1:num_points
     
     %Areas
     %2 solar panels
-    A_tot_solar = 2*15*15;
+    A_tot_solar = 2*15*15/10^(4);
     A_ref_solar = A_tot_solar*sin(theta);
     
     %box (front and upper side)
-    A_tot_box_front = 10*10;
-    A_tot_box_top = 15*10;
+    A_tot_box_front = 10*10/10^(4);
+    A_tot_box_top = 15*10/10^(4);
     
     A_ref_box_front = A_tot_box_front*cos(theta);
     A_ref_box_top   = A_tot_box_top*sin(theta);
@@ -52,6 +54,9 @@ for c = 1:num_points
     A_ref_tot_vec(c) = A_ref_tot;
 
 end
+
+B_max = A_ref_tot_vec(end) * C_d_vec(end)/m;
+B_min = A_ref_tot_vec(1) * C_d_vec(1)/m;
 
 A_X_C_D = A_ref_tot_vec.*C_d_vec;
 
@@ -88,21 +93,32 @@ g(x) = finverse(h(x));
 % beta0 = [1 1 1 1];
 % mdl = fitnlm(X,y,modelfun,beta0);
 % sol = fitnlm;
-
-fx_d = 0;
+A_d = 400 *10^(-4);
+C_dd = 2.35;
+fx_d = 0.01767*2; %(B_max)*m; % This is checked, update B_min and B_max in main_2 to have these values
 
 x = theta_vec; 
-y = A_X_C_D/10^4;
+y = A_X_C_D;
 p = polyfit(x,y,4);
 %p = [40.01, -411.74, 327.3, 1173.96, 261.12-fx_d];
 p(5) = p(5) - fx_d;
 r = roots(p);
-root = select_root(r, 0, pi/2)
-syms x
+root = select_root(r, 0, pi/2);
+root = root *180/pi;
+
+
+
+
+%syms x
 % assume(x > 0);
 %assume(x <= pi/2);
 % assumptions(x)
-fx(x) = poly2sym(p);
+
+
+
+%fx(x) = poly2sym(p);
+
+
 %gx(x) = finverse(fx);
 %sol = gx(1200);
 %sol_num = double(sol);
@@ -124,11 +140,12 @@ function root = select_root(roots, lower_bound, upper_bound)
 
     end
     if size(root,2) > 1
-        root_index = min(root);
-        root = root(root_index);
+        root = min(root);
+        %root = root(root_index);
     end
 
     if size(root,2) < 1
+        root = 0;
     end
 
 end
