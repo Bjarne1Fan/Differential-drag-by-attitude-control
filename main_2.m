@@ -78,7 +78,7 @@ d_e_x        = e_follower*cos(omega_follower) - e_leader*cos(omega_leader);
 d_e_y        = e_follower*sin(omega_follower) - e_leader*sin(omega_leader);
 d_i_x        = i_follower - i_leader;
 d_i_y        = (Omega_follower -Omega_leader)*sin(i_leader);
-d_Ballistic  = (BC_follower - BC_leader)/BC_follower;
+%d_Ballistic  = (BC_follower - BC_leader)/BC_follower;
 
 x = [d_a; d_lambda; d_e_x; d_e_y; d_i_x; d_i_y];
 
