@@ -99,7 +99,8 @@ fx_d = 0.01767*2; %(B_max)*m; % This is checked, update B_min and B_max in main_
 
 x = theta_vec; 
 y = A_X_C_D;
-p = polyfit(x,y,4);
+p_fixed  = polyfit(x,y,4);
+p = p_fixed;
 %p = [40.01, -411.74, 327.3, 1173.96, 261.12-fx_d];
 p(5) = p(5) - fx_d;
 r = roots(p);
