@@ -8,8 +8,8 @@ nlobj = nlmpc(nx,ny,nu);
 
 %Specify the sample time and horizons of the controller.
 nlobj.Ts                = 30;
-nlobj.PredictionHorizon = 30;
-nlobj.ControlHorizon    = 3;
+nlobj.PredictionHorizon = 60;
+nlobj.ControlHorizon    = 2;
 
 % state function
 nlobj.Model.StateFcn    = 'state_func';
@@ -20,6 +20,9 @@ nlobj.Model.NumberOfParameters = 5;
 
 % define output function
 nlobj.Model.OutputFcn = @(x, u, a_f_nmpc, e_f_nmpc, i_f_nmpc, omega_f_nmpc, rho_f) [x(1); x(2)];
+
+nlobj.States(1).Max = inf;
+nlobj.States(1).Min = -inf;
 
 
 x0 = [0 ; -2.00000000000000e-05 ; 0.001 ; 0.001; 0.001; 0.001];
