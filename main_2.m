@@ -18,11 +18,11 @@ A_l_max = 0.6;
 A_f_max = 0.6;
 C_d = 2.6;
 
-B_f_min = (C_d*A_f_min)/m_f;
-B_f_max = (C_d*A_f_max)/m_f;
+B_f_min = 0.0130124908105961; (C_d*A_f_min)/m_f;
+B_f_max = 0.0780749448635768; %(C_d*A_f_max)/m_f;
 
-B_l_min = (C_d*A_l_min)/m_l;
-B_l_max = (C_d*A_l_max)/m_l;
+B_l_min = 0.0130124908105961; %(C_d*A_l_min)/m_l;
+B_l_max = 0.0780749448635768; %(C_d*A_l_max)/m_l;
 
 
 %initial conditions Orbit
@@ -43,8 +43,8 @@ Omega_follower  = 0; % logidtude of accendng node
 i_leader        = 20; % inclination
 i_follower      = 20; % inclination
 
-e_leader       = 0.5; %eccenticity
-e_follower     = 0.5;  %eccentricity
+e_leader       = 0.01; %eccenticity
+e_follower     = 0.01;  %eccentricity
 
 u_leader    = omega_leader + M_leader;
 u_follower  = omega_follower + M_follower;
@@ -78,7 +78,7 @@ d_e_x        = e_follower*cos(omega_follower) - e_leader*cos(omega_leader);
 d_e_y        = e_follower*sin(omega_follower) - e_leader*sin(omega_leader);
 d_i_x        = i_follower - i_leader;
 d_i_y        = (Omega_follower -Omega_leader)*sin(i_leader);
-d_Ballistic  = (BC_follower - BC_leader)/BC_follower;
+%d_Ballistic  = (BC_follower - BC_leader)/BC_follower;
 
 x = [d_a; d_lambda; d_e_x; d_e_y; d_i_x; d_i_y];
 

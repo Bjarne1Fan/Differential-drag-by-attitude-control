@@ -1,0 +1,16 @@
+ 
+
+nmpc_time = out.ballistic.Time;
+
+nmpc_mv_ballistic_leader = out.ballistic.Data(:,1);
+ nmpc_mv_ballistic_follower = out.ballistic.Data(:,2);
+
+ nmpc_plant_ballistic_leader = out.ballistic.Data(:,3);
+ nmpc_plant_ballistic_follower = out.ballistic.Data(:,4);
+
+ %output sates
+a_rel      = out.states.Data(:,1)*a_leader;
+lambda_rel = out.states.Data(:,2)*a_leader;
+
+%other states
+e_x = 
